@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Klopp Discomfort | Liverpool, Slot and Iraola Tactical Analysis</title>
+<meta name="description" content="A data-led tactical read on why Andoni Iraola is not a return to Klopp-ball, but a return to the feeling Klopp's Liverpool forced on opponents.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0a0c0f; --bg2:#0e1116; --panel:rgba(255,255,255,.035); --panel-b:rgba(255,255,255,.09);
+  --ink:#edeef0; --muted:#8c929c; --faint:#5a606b;
+  --red:#e4002b; --klopp:#f0323a; --slot:#5aa6e6; --iraola:#f5a623;
+  --mono:'JetBrains Mono',monospace; --body:'Barlow',sans-serif; --disp:'Anton',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-weight:400;line-height:1.6;
+  -webkit-font-smoothing:antialiased;font-size:17px;
+  background-image:radial-gradient(900px 500px at 80% -10%, rgba(228,0,43,.10), transparent 60%),
+                   radial-gradient(700px 500px at -10% 10%, rgba(90,166,230,.06), transparent 55%);}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+a{color:var(--red);text-decoration:none}
+
+.hero{padding:78px 0 30px;border-bottom:1px solid var(--panel-b)}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--red);margin-bottom:20px}
+h1{font-family:var(--disp);font-weight:400;font-size:clamp(46px,9vw,104px);line-height:.92;letter-spacing:.01em;text-transform:uppercase}
+h1 .dim{color:var(--faint);-webkit-text-stroke:1px var(--faint);color:transparent}
+.sub{font-size:clamp(18px,2.4vw,23px);color:var(--ink);max-width:780px;margin-top:24px;font-weight:400}
+.sub b{color:var(--red);font-weight:600}
+.byline{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:26px;letter-spacing:.04em}
+
+nav.tabs{position:sticky;top:0;z-index:40;background:rgba(10,12,15,.86);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--panel-b);margin-top:0}
+.tabs-inner{display:flex;gap:4px;overflow-x:auto;max-width:1080px;margin:0 auto;padding:0 14px;scrollbar-width:none}
+.tabs-inner::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;background:none;border:none;color:var(--muted);font-family:var(--mono);font-size:12.5px;
+  letter-spacing:.06em;text-transform:uppercase;padding:17px 14px;cursor:pointer;border-bottom:2px solid transparent;
+  transition:color .18s,border-color .18s;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--red)}
+.tab:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+
+.panel{display:none;padding:54px 0 70px;animation:fade .4s ease}
+.panel.active{display:block}
+.panel:focus{outline:none}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--red);margin-bottom:14px}
+h2{font-family:var(--disp);font-weight:400;font-size:clamp(28px,4.4vw,44px);line-height:1.02;text-transform:uppercase;letter-spacing:.01em;margin-bottom:8px}
+h3{font-family:var(--body);font-weight:700;font-size:21px;margin:34px 0 10px;letter-spacing:.01em}
+.section-note{color:var(--muted);max-width:730px;margin-top:12px}
+
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
+.ccard{background:var(--panel);border:1px solid var(--panel-b);border-radius:14px;padding:22px;position:relative;overflow:hidden}
+.ccard:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--c)}
+.ccard .who{font-family:var(--disp);font-size:26px;text-transform:uppercase;color:var(--c);letter-spacing:.02em}
+.ccard .type{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:8px 0 14px}
+.ccard .idea{font-size:15.5px;color:var(--ink)}
+.ccard .form{font-family:var(--mono);font-size:12px;color:var(--faint);margin-top:14px}
+
+.tri-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center;margin-top:40px}
+.tri svg{width:100%;height:auto;display:block}
+.tri .node{cursor:pointer;transition:transform .2s}
+.tri .node circle{transition:r .2s, fill .2s, stroke .2s}
+.tri .node:hover circle,.tri .node:focus circle{stroke-width:2.5}
+.tri .node:focus{outline:none}
+.tri .node:focus circle{filter:drop-shadow(0 0 6px rgba(255,255,255,.4))}
+.tri .node text{font-family:var(--mono);font-size:13px;fill:var(--ink);text-transform:uppercase;letter-spacing:.05em}
+.tri-detail{background:var(--panel);border:1px solid var(--panel-b);border-radius:14px;padding:26px;min-height:180px}
+.tri-detail .h{font-family:var(--disp);font-size:24px;text-transform:uppercase;letter-spacing:.02em;margin-bottom:6px}
+.tri-detail .t{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.tri-detail p{font-size:16px}
+
+.chart-card{background:var(--panel);border:1px solid var(--panel-b);border-radius:14px;padding:24px;margin-top:26px}
+.chart-card .ct{font-family:var(--body);font-weight:700;font-size:19px;margin-bottom:4px}
+.chart-card .cmsg{color:var(--muted);font-size:15px;margin-bottom:18px;max-width:760px}
+.chart-box{position:relative;height:340px;width:100%}
+.cnote{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.04em;margin-top:14px;text-transform:uppercase}
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:6px}
+.mini .mh{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.mini .mbox{position:relative;height:165px}
+@media(max-width:600px){.mini-grid{grid-template-columns:1fr}}
+
+.pitches{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+.pitch-card{background:var(--panel);border:1px solid var(--panel-b);border-radius:14px;padding:18px}
+.pitch-card .pwho{font-family:var(--disp);font-size:22px;text-transform:uppercase;color:var(--c);letter-spacing:.02em}
+.pitch-card .pform{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:10px}
+.pitch svg{width:100%;height:auto;display:block;border-radius:8px}
+.pitch .dot{fill:var(--c)}
+.pitch .pl{font-family:var(--mono);font-size:8.5px;fill:#0a0c0f;font-weight:700;text-anchor:middle}
+.pbul{list-style:none;margin-top:14px;font-size:13.5px}
+.pbul li{padding:4px 0 4px 16px;position:relative;color:var(--muted)}
+.pbul li:before{content:"";position:absolute;left:0;top:11px;width:6px;height:6px;background:var(--c);border-radius:50%}
+.pbul li.risk{color:var(--ink)}
+.pbul li.risk:before{background:var(--red)}
+
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:30px}
+.role{background:var(--panel);border:1px solid var(--panel-b);border-radius:14px;padding:22px}
+.role .rn{font-family:var(--body);font-weight:700;font-size:18px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.role .rn:before{content:"";width:9px;height:9px;border-radius:2px;background:var(--iraola)}
+.fromto{font-size:14.5px;margin-bottom:6px}
+.fromto .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);display:inline-block;width:46px}
+.role .key{margin-top:12px;padding-top:12px;border-top:1px solid var(--panel-b);font-size:14px}
+.role .key .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--red);display:block;margin-bottom:3px}
+
+.markers{margin-top:30px;counter-reset:m}
+.marker{display:flex;gap:20px;align-items:flex-start;background:var(--panel);border:1px solid var(--panel-b);
+  border-radius:12px;padding:20px 22px;margin-bottom:12px}
+.marker:before{counter-increment:m;content:"0" counter(m);font-family:var(--disp);font-size:34px;color:var(--faint);line-height:1;flex:0 0 auto}
+.marker .mt{font-family:var(--body);font-weight:700;font-size:18px;margin-bottom:3px}
+.marker .md{color:var(--muted);font-size:15px}
+.marker.decisive{border-color:var(--red);background:linear-gradient(90deg,rgba(228,0,43,.10),var(--panel))}
+.marker.decisive:before{color:var(--red)}
+.marker .flag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-top:6px}
+
+.prose{max-width:760px}
+.prose p{margin-bottom:18px}
+.prose h3{margin-top:38px}
+.prose .pull{font-family:var(--disp);font-weight:400;font-size:clamp(24px,3.6vw,34px);line-height:1.08;text-transform:uppercase;
+  color:var(--ink);border-left:3px solid var(--red);padding-left:20px;margin:34px 0}
+
+.method dl{margin-top:26px}
+.mrow{display:grid;grid-template-columns:200px 1fr;gap:18px;padding:14px 0;border-bottom:1px solid var(--panel-b)}
+.mrow dt{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
+.mrow dd{color:var(--muted);font-size:15.5px}
+.mrow dd b{color:var(--ink);font-weight:600}
+
+footer{border-top:1px solid var(--panel-b);padding:36px 0 60px;margin-top:30px}
+footer .fb{font-family:var(--disp);font-size:20px;text-transform:uppercase;letter-spacing:.02em}
+footer .fs{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:.04em}
+footer .fd{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:18px;max-width:700px;line-height:1.7}
+
+@media(max-width:780px){
+  .cards3,.pitches{grid-template-columns:1fr}
+  .tri-wrap{grid-template-columns:1fr}
+  .mrow{grid-template-columns:1fr;gap:4px}
+  body{font-size:16px}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Liverpool · Klopp → Slot → Iraola · Tactical read</div>
+    <h1>The&nbsp;Klopp<br><span class="dim">Discomfort</span></h1>
+    <p class="sub">Liverpool aren't trying to rebuild Klopp's football. They're trying to bring back <b>the feeling his teams forced on opponents</b>: rushed touches, hurried passes, attacks that start before anyone can set their feet.</p>
+    <div class="byline">Ask Christiansen · Football analysis · Wyscout data + tactical reading</div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tabs-inner" id="tabbar" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" aria-selected="true" id="tab-overview" aria-controls="overview" data-tab="overview">Overview</button>
+    <button class="tab" role="tab" aria-selected="false" id="tab-data" aria-controls="data" data-tab="data">Data Explorer</button>
+    <button class="tab" role="tab" aria-selected="false" id="tab-mechanics" aria-controls="mechanics" data-tab="mechanics">Tactical Mechanics</button>
+    <button class="tab" role="tab" aria-selected="false" id="tab-roles" aria-controls="roles" data-tab="roles">Player Roles</button>
+    <button class="tab" role="tab" aria-selected="false" id="tab-markers" aria-controls="markers" data-tab="markers">Early Markers</button>
+    <button class="tab" role="tab" aria-selected="false" id="tab-analysis" aria-controls="analysis" data-tab="analysis">Full Analysis</button>
+    <button class="tab" role="tab" aria-selected="false" id="tab-method" aria-controls="method" data-tab="method">Methodology</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- OVERVIEW -->
+<section class="panel active" id="overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="0">
+  <div class="eyebrow">The short version</div>
+  <h2>Three managers,<br>three ways to control a game</h2>
+  <p class="section-note">Slot and Iraola both set up in a 4-2-3-1. That's the trap. On the grass they ask completely different questions of the opponent. Slot was hired to tidy Liverpool up after Klopp. Iraola looks like an attempt to put some of the mess back — though not quite the mess Klopp made.</p>
+
+  <div class="cards3">
+    <div class="ccard" style="--c:var(--klopp)">
+      <div class="who">Klopp</div><div class="type">Intensity control</div>
+      <div class="idea">He didn't trade the ball for chaos. He kept it, pushed the game high, and made every loose touch feel like the start of a Liverpool attack.</div>
+      <div class="form">4-3-3 · 93% of matches</div>
+    </div>
+    <div class="ccard" style="--c:var(--slot)">
+      <div class="who">Slot</div><div class="type">Structure control</div>
+      <div class="idea">He made Liverpool calmer. For one season that was enough to win the league. By the second, too much of the old threat had gone with the mess.</div>
+      <div class="form">4-2-3-1 · 88% of matches</div>
+    </div>
+    <div class="ccard" style="--c:var(--iraola)">
+      <div class="who">Iraola</div><div class="type">Event control</div>
+      <div class="idea">He doesn't need long spells on the ball to apply pressure. His teams go forward early, fight for the next ball, and keep asking you to survive one more action.</div>
+      <div class="form">4-2-3-1 · 88% of matches</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:46px">Tap a manager</h3>
+  <div class="tri-wrap">
+    <div class="tri">
+      <svg viewBox="0 0 460 360" role="img" aria-label="Three control models: Klopp intensity, Slot structure, Iraola event">
+        <line x1="230" y1="64" x2="86" y2="300" stroke="rgba(255,255,255,.12)"/>
+        <line x1="230" y1="64" x2="374" y2="300" stroke="rgba(255,255,255,.12)"/>
+        <line x1="86" y1="300" x2="374" y2="300" stroke="rgba(255,255,255,.12)"/>
+        <g class="node" data-who="klopp" role="button" tabindex="0" aria-label="Klopp: intensity control"><circle cx="230" cy="64" r="30" fill="rgba(240,50,58,.16)" stroke="var(--klopp)" stroke-width="1.5"/><text x="230" y="34" text-anchor="middle">Intensity</text></g>
+        <g class="node" data-who="slot" role="button" tabindex="0" aria-label="Slot: structure control"><circle cx="86" cy="300" r="30" fill="rgba(90,166,230,.16)" stroke="var(--slot)" stroke-width="1.5"/><text x="86" y="346" text-anchor="middle">Structure</text></g>
+        <g class="node" data-who="iraola" role="button" tabindex="0" aria-label="Iraola: event control"><circle cx="374" cy="300" r="30" fill="rgba(245,166,35,.16)" stroke="var(--iraola)" stroke-width="1.5"/><text x="374" y="346" text-anchor="middle">Event</text></g>
+        <text x="230" y="69" text-anchor="middle" style="font-family:var(--disp);fill:var(--klopp);font-size:16px">K</text>
+        <text x="86" y="305" text-anchor="middle" style="font-family:var(--disp);fill:var(--slot);font-size:16px">S</text>
+        <text x="374" y="305" text-anchor="middle" style="font-family:var(--disp);fill:var(--iraola);font-size:16px">I</text>
+      </svg>
+    </div>
+    <div class="tri-detail" id="triDetail" aria-live="polite">
+      <div class="h" style="color:var(--klopp)">Klopp · Intensity control</div>
+      <div class="t">Tap or select a node</div>
+      <p>Keeps the game high and uncomfortable. Opponents rarely get a clean first pass, and when they lose it, Liverpool are already running the other way.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DATA EXPLORER -->
+<section class="panel" id="data" role="tabpanel" aria-labelledby="tab-data" tabindex="0">
+  <div class="eyebrow">Data Explorer</div>
+  <h2>Where the shift<br>shows up</h2>
+  <p class="section-note">Premier League only. Klopp 152 matches, Slot 76, Iraola at Bournemouth 114. Every figure is computed from match-level Wyscout team data. Bournemouth aren't Liverpool, so read the shapes and trade-offs, not the raw possession gap.</p>
+
+  <div class="chart-card">
+    <div class="ct">Klopp wasn't low-possession chaos</div>
+    <div class="cmsg">He had plenty of the ball and still pressed hard. Each dot is one league season; higher up means a more aggressive press. The point isn't that Bournemouth match Liverpool's possession — they don't — it's the trade-off each manager makes.</div>
+    <div class="chart-box"><canvas id="c1"></canvas></div>
+    <div class="cnote">Possession % vs PPDA · PL · per season</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="ct">The threat Slot switched off</div>
+    <div class="cmsg">Klopp's counters climbed from 1.68 to 3.26 a game across his last four years. Slot sat near 1.4. Iraola, for all the talk of transitions, isn't any higher.</div>
+    <div class="chart-box"><canvas id="c2"></canvas></div>
+    <div class="cnote">Counterattacks per match · PL · 20/21 → 25/26</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="ct">Vertical creativity — the part Iraola doesn't bring back</div>
+    <div class="cmsg">Smart passes are the line-breakers, the ones that try to find a runner behind. Klopp's Liverpool lived on them. Bournemouth don't — though the Rayo number is a reminder this travels with better players.</div>
+    <div class="chart-box"><canvas id="c3"></canvas></div>
+    <div class="cnote">Smart passes per match · league play · manager average</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="ct">What kind of directness?</div>
+    <div class="cmsg">Not one number but four, each on its own scale. Iraola's directness lives in the build-up, not in counters: more long balls, more forward passing, shorter spells on the ball, and more turnovers in his own half.</div>
+    <div class="mini-grid">
+      <div class="mini"><div class="mh">Long pass share %</div><div class="mbox"><canvas id="c4a"></canvas></div></div>
+      <div class="mini"><div class="mh">Forward pass share %</div><div class="mbox"><canvas id="c4b"></canvas></div></div>
+      <div class="mini"><div class="mh">Passes per possession</div><div class="mbox"><canvas id="c4c"></canvas></div></div>
+      <div class="mini"><div class="mh">Own-third losses %</div><div class="mbox"><canvas id="c4d"></canvas></div></div>
+    </div>
+    <div class="cnote">Directness markers · PL · Klopp / Slot / Iraola (Bournemouth)</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="ct">Domination, sterility, exposure</div>
+    <div class="cmsg">Klopp's best years gave Liverpool both chance volume and control. Slot's final season lost too much of the first. Bournemouth created enough but gave up enough to make the risk plain — and that's a mid-table budget, not Liverpool's.</div>
+    <div class="chart-box"><canvas id="c5"></canvas></div>
+    <div class="cnote">xG vs xGA · PL · per season · lower xGA plotted higher</div>
+  </div>
+</section>
+
+<!-- MECHANICS -->
+<section class="panel" id="mechanics" role="tabpanel" aria-labelledby="tab-mechanics" tabindex="0">
+  <div class="eyebrow">Tactical Mechanics</div>
+  <h2>Same shape,<br>opposite football</h2>
+  <p class="section-note">Slot and Iraola both line up 4-2-3-1, 88% of the time each. The formation isn't the difference. The triggers are — when they press, how they build, how much risk they'll eat. Klopp's 4-3-3 is the odd one out. The shapes below come from the data; the pressing runs are standard tactical reading.</p>
+
+  <div class="pitches">
+    <div class="pitch-card" style="--c:var(--klopp)">
+      <div class="pwho">Klopp</div><div class="pform">4-3-3 · intensity control</div>
+      <div class="pitch" id="pitchK"></div>
+      <ul class="pbul">
+        <li>Front three press the build-up with curved runs</li>
+        <li>Two 8s jump forward, single pivot screens</li>
+        <li>Full-backs high, high line behind</li>
+        <li>High regain becomes an immediate attack</li>
+        <li class="risk">Risk: space in behind the high line</li>
+      </ul>
+    </div>
+    <div class="pitch-card" style="--c:var(--slot)">
+      <div class="pwho">Slot</div><div class="pform">4-2-3-1 · structure control</div>
+      <div class="pitch" id="pitchS"></div>
+      <ul class="pbul">
+        <li>Double pivot protects the central zones</li>
+        <li>Patient circulation, measured press triggers</li>
+        <li>Play routed through the 10, winger and full-back</li>
+        <li>Low transition volume by design</li>
+        <li class="risk">Risk: little threat once you win it back</li>
+      </ul>
+    </div>
+    <div class="pitch-card" style="--c:var(--iraola)">
+      <div class="pwho">Iraola</div><div class="pform">4-2-3-1 · event control</div>
+      <div class="pitch" id="pitchI"></div>
+      <ul class="pbul">
+        <li>Striker and 10 lock central build-up</li>
+        <li>Wingers jump the full-backs aggressively</li>
+        <li>Pivot has to step out and patch the holes</li>
+        <li>Forward ball goes early, then win it back</li>
+        <li class="risk">Risk: open space if the first press breaks</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section class="panel" id="roles" role="tabpanel" aria-labelledby="tab-roles" tabindex="0">
+  <div class="eyebrow">Player Role Impact</div>
+  <h2>What it asks<br>of Liverpool's players</h2>
+  <p class="section-note">The switch from Slot to Iraola changes the job descriptions more than the formation lets on. This is what the style demands, not a verdict on any individual.</p>
+  <div class="roles">
+    <div class="role"><div class="rn">Centre-backs</div>
+      <div class="fromto"><span class="lab">From</span> positional calm under Slot</div>
+      <div class="fromto"><span class="lab">To</span> defending more open space behind a high line</div>
+      <div class="key"><span class="lab">Key demand</span> pace, recovery defending, 1v1 in space</div></div>
+    <div class="role"><div class="rn">Double pivot</div>
+      <div class="fromto"><span class="lab">From</span> circulation and control</div>
+      <div class="fromto"><span class="lab">To</span> pressing, jumping, patching holes</div>
+      <div class="key"><span class="lab">Key demand</span> duel volume, interceptions, second balls</div></div>
+    <div class="role"><div class="rn">No. 10</div>
+      <div class="fromto"><span class="lab">From</span> connection player</div>
+      <div class="fromto"><span class="lab">To</span> press trigger as much as creator</div>
+      <div class="key"><span class="lab">Key demand</span> work rate, first forward action</div></div>
+    <div class="role"><div class="rn">Wingers</div>
+      <div class="fromto"><span class="lab">From</span> controlled wide relationships</div>
+      <div class="fromto"><span class="lab">To</span> press, jump, run beyond</div>
+      <div class="key"><span class="lab">Key demand</span> repeated high-intensity actions</div></div>
+    <div class="role"><div class="rn">Goalkeeper</div>
+      <div class="fromto"><span class="lab">From</span> build-up security</div>
+      <div class="fromto"><span class="lab">To</span> build-up plus emergency sweeper</div>
+      <div class="key"><span class="lab">Key demand</span> reading space behind a high line</div></div>
+  </div>
+  <p class="section-note" style="margin-top:26px">A squad that had been pushed toward calmer possession football is now being asked to run Iraola's game. Whether the pieces fit the new job is the question the first months will answer.</p>
+</section>
+
+<!-- MARKERS -->
+<section class="panel" id="markers" role="tabpanel" aria-labelledby="tab-markers" tabindex="0">
+  <div class="eyebrow">Early Markers</div>
+  <h2>Five numbers to watch<br>in Iraola's first games</h2>
+  <p class="section-note">These five test the thesis directly. They're not a full report card — plenty else will move too — but if these shift, most of the rest follows.</p>
+  <div class="markers">
+    <div class="marker"><div><div class="mt">Possession</div><div class="md">Does possession actually drop, or does Iraola keep Liverpool's ball volume while changing what they do with it?</div></div></div>
+    <div class="marker"><div><div class="mt">Long pass share</div><div class="md">Does it climb toward 13%, away from Slot's 8%?</div></div></div>
+    <div class="marker"><div><div class="mt">PPDA</div><div class="md">Does the press dip back under 9, toward Klopp's level?</div></div></div>
+    <div class="marker"><div><div class="mt">Smart passes</div><div class="md">Do the line-breaking passes recover from Slot's floor of under 2?</div></div></div>
+    <div class="marker decisive"><div><div class="mt">Counterattacks</div><div class="md">Does Liverpool get Klopp's transition threat back toward 3.26 — or stay low while only the press and the directness rise?</div><div class="flag">The decisive one</div></div></div>
+  </div>
+  <p class="section-note" style="margin-top:24px">If the counters come back, it's a real return to Klopp's mechanism. If they stay low while the intensity and the verticality climb, Liverpool have bought something new that only shares a temperament with the past.</p>
+</section>
+
+<!-- FULL ANALYSIS -->
+<section class="panel" id="analysis" role="tabpanel" aria-labelledby="tab-analysis" tabindex="0">
+  <div class="eyebrow">Full Written Analysis</div>
+  <h2>The Klopp Discomfort</h2>
+  <div class="prose">
+    <p class="pull">Iraola isn't a return to Klopp-ball. He's a return to the way Klopp's Liverpool made opponents feel.</p>
+
+    <p>Liverpool sacked Arne Slot on 30 May 2026, a year after he won the league, and went straight to Andoni Iraola at Bournemouth. The question worth asking isn't whether Iraola is better than Slot. It's whether Liverpool are walking back toward what they gave up after Klopp, now that the calm version has run out of road.</p>
+    <p>The numbers don't say Liverpool are rebuilding Klopp. They say something narrower. Slot stripped out too much of the old threat, and Iraola is how they get some of it back — through a team that plays nothing like Klopp's on the ball.</p>
+
+    <h3>What Klopp actually was</h3>
+    <p>People remember the chaos. The numbers remember something more specific: control and intensity at once. Klopp's Liverpool had 60–61% of the ball in each of his last four seasons, but they didn't sit on it like a possession side. The press didn't fade at the end either — PPDA dropped to 8.02 in his final year, the most aggressive of the lot. And the counters kept climbing, 1.68 up to 3.26 a game. It was a machine for events: press high, win it, go, with enough of the ball to keep doing it. In 2021/22 that came with a +1.64 xG difference, one of the best the league has produced. So "the roots" were never about having less of the ball. They were about high intensity, high territory, and the output to back it.</p>
+
+    <h3>What Slot took out</h3>
+    <p>Slot kept the ball and switched the event machine off. The counters were nearly halved, 2.58 to 1.41. The line-breaking smart passes fell by more than two thirds, 6.56 to 2.01. The press eased, the tempo dropped, and Liverpool coughed the ball up in their own third more often — the tax on playing out under pressure. What they lost wasn't possession. It was the sense that any turnover might be in their net three seconds later.</p>
+    <p>For a year it worked beautifully. 2.26 xG created, 1.09 conceded, a title. Then 2025/26 went flat. The structure held — possession barely moved, 57.8% — but the end product drained away. xG down to 1.61, xGA up to 1.37, the press softer still at 10.70. Same shape, same passing, far fewer chances. I'd stop short of calling it a collapse; fifth place isn't a relegation fight. But the model lost the thing that made it dangerous and had nothing to fall back on, which is exactly the risk control football carries. Take out the transition threat and there's no plan B when the final ball stops dropping.</p>
+
+    <h3>What Iraola brings — and what he doesn't</h3>
+    <p>Start with the obvious: the game gets less comfortable. Bournemouth went 12th, 9th, 6th under him and reached the Europa League for the first time in the club's history. It happened while they lost important players, Dean Huijsen and Illia Zabarnyi among them. That makes it a better advert for the system than for any one signing, though you can't fully separate it from good recruitment.</p>
+    <p>What he changes is the texture. The press is sharper, PPDA 9.65 to Slot's 10.30. The defending is messier in a useful way — more interceptions (42.4 to 35.1 a game), more tackles, more fouls, a side that hunts the ball rather than waits for it. And the ball moves forward earlier: a 13% long-ball share, higher than Klopp or Slot, with short spells of 3.7 passes against Klopp's 5.7.</p>
+    <p>But this isn't a Klopp tribute act. He doesn't bring back the 4-3-3 — Bournemouth play 4-2-3-1, the same shape Slot used, 88% of the time. He doesn't bring back the counter volume, around 1.5 a game against Klopp's 3.26. And he doesn't bring back the possession or the creative, line-breaking passing. Klopp had 60% and 5–8 smart passes a match; Bournemouth had 48% and under two. A lot of that gap is the squad, and his Rayo side managed 4.37, so the profile carries more with better players. But at its core his football is more direct and less ball-dominant than Klopp's ever was.</p>
+
+    <h3>Three ways to control a game</h3>
+    <p>All three want control. They go about it differently, and the formations show how far apart they sit.</p>
+    <p><b>Klopp (4-3-3, 93%).</b> Full-backs high, front three onto the build-up, two 8s pushing up, one 6 holding. Win it high, attack at once. Control through height and intensity. The cost is space in behind; the payoff is a regain that's already an attack.</p>
+    <p><b>Slot (4-2-3-1, 88%).</b> A double pivot guarding the middle, slower build-up, low transition risk, the football routed through the 10, the winger and the full-back. Control by taking the random out. The cost is what showed up in year two — not much threat once you've won the ball back.</p>
+    <p><b>Iraola (4-2-3-1, 88%).</b> Same shape as Slot, used the opposite way. Striker and 10 lock the centre, the wingers jump the full-backs, the pivot has to step out and patch the holes, and the forward ball goes early. Control by stacking up moments where his side gets there first. The cost is space when the first press is beaten; the payoff is duels, fouls, momentum and an opponent who never settles.</p>
+    <p>Liverpool inherit Slot's 4-2-3-1 and fill it with a lot more of Klopp's edge. The structure is Slot's. The feeling is Klopp's.</p>
+
+    <h3>The pressing, by the numbers</h3>
+    <p>Klopp's counters at 3.26 and PPDA at 8.02: win it high, go. Slot's counters at 1.4 and a press eased to 10.3–10.7: no thanks to the chaos. Iraola's 13.0 fouls, 3.8 tackles and 42.4 interceptions: win it by force rather than by keeping it.</p>
+
+    <h3>So what kind of directness is it?</h3>
+    <p>If Iraola doesn't counter more than Slot, where's the directness? In the build-up, mostly. The markers: a high long-ball share (12.8%), a lot of forward passing (41.5%), short possessions (3.7 passes), frequent giveaways in his own third (18.9%), a low aerial win rate (42.5%), and that ball-hunting profile.</p>
+    <p>Read together, that's not route-one to a target man — you'd win more headers for that. It's not a sit-and-counter side either. It's a team that plays forward early, accepts it'll lose the ball a fair bit, and is built to win it straight back and go again. Waves, not breaks. What the aggregates can't tell you is the precise pattern — ball in behind, into feet, second balls — but the direction is clear: forward, early, with a plan to get it back the moment it's gone.</p>
+
+    <h3>Verdict</h3>
+    <p>Liverpool are walking away from the control project and back toward the intensity Klopp ran, after Slot's version won a league and then went quiet. They're not doing it by copying the 4-3-3, the counters or the possession. They've hired a man who recreates the feeling — high press, forward play, duels, momentum — through a more direct, less ball-based team than Klopp ever put out. Richard Hughes, who signed Iraola at Bournemouth and again at Anfield, is the thread running through all of it.</p>
+    <p>This was never about copying Klopp. It's about getting back the thing opponents hated: the game moving too fast, the first touch having to be perfect, a single loose ball turning into a Liverpool attack before you've taken a breath.</p>
+    <p class="pull">Not Klopp-ball. Klopp's discomfort — with Iraola's mechanism.</p>
+  </div>
+</section>
+
+<!-- METHOD -->
+<section class="panel method" id="method" role="tabpanel" aria-labelledby="tab-method" tabindex="0">
+  <div class="eyebrow">Methodology</div>
+  <h2>How this was built</h2>
+  <p class="section-note">The analysis runs on internal Wyscout team data, so the sample matters. Every figure here is computed from match-level exports.</p>
+  <dl>
+    <div class="mrow"><dt>Source</dt><dd>Wyscout team data, five templates per match (general, attack, defence, passing, tempo). Columns mapped to header and checked.</dd></div>
+    <div class="mrow"><dt>Sample</dt><dd>League play only. <b>Klopp 152 PL matches</b> (2020–24), <b>Slot 76 PL matches</b> (2024–26), <b>Iraola 114 PL matches</b> at Bournemouth (2023–26).</dd></div>
+    <div class="mrow"><dt>Style context</dt><dd>Slot's Feyenoord (102 Eredivisie matches) and Iraola's Rayo Vallecano (76 La Liga matches) are used as style context only, never as head-to-head figures. Rayo's Segunda season and all cup and European matches are left out.</dd></div>
+    <div class="mrow"><dt>Comparability</dt><dd>Premier League is the direct axis. League strength inflates possession and pressing, so cross-league numbers are context, not measurement. <b>Bournemouth's squad is not a Liverpool squad</b> — possession and creative passing will shift with better players. What carries over is the intent: press, directness, verticality and risk.</dd></div>
+    <div class="mrow"><dt>PPDA</dt><dd>Opponent passes allowed per defensive action in the pressing zones. Lower means a harder press. Shown as-is, with no "adjusted for possession" rework.</dd></div>
+    <div class="mrow"><dt>Smart pass</dt><dd>Wyscout's term for a creative, penetrative pass that tries to break the defensive line. Used as a marker of vertical risk, read alongside progressive and final-third passes, not on its own.</dd></div>
+    <div class="mrow"><dt>Formations</dt><dd>From the Scheme field, weighted by matches. Klopp 4-3-3 (93%), Slot Liverpool 4-2-3-1 (88%), Iraola Bournemouth 4-2-3-1 (88%).</dd></div>
+    <div class="mrow"><dt>Aggregation</dt><dd>Per-match averages within league play. Era figures are aggregated across all relevant matches, not an average of season averages. Shares are computed from totals. The numbers are a fixed snapshot through 2025/26 — this is a published read, not a live tracker.</dd></div>
+    <div class="mrow"><dt>Public context</dt><dd>The appointment, Slot's exit and Bournemouth's 12th → 9th → 6th run with Europa League qualification are cross-checked against <a href="https://www.espn.com/soccer/story/_/id/48945214/liverpool-appoint-andoni-iraola-arne-slot-successor" target="_blank" rel="noopener">ESPN</a>, <a href="https://www.skysports.com/football/news/11669/13550174/andoni-iraola-liverpool-appoint-former-bournemouth-boss-as-arne-slots-successor-on-two-year-deal" target="_blank" rel="noopener">Sky Sports</a>, the <a href="https://www.liverpoolfc.com/news/liverpool-fc-appoint-andoni-iraola-new-head-coach" target="_blank" rel="noopener">official club announcement</a> and Opta's <a href="https://theanalyst.com/articles/bournemouth-substance-man-city-premier-league-stats" target="_blank" rel="noopener">The Analyst</a>. The summer departures of Huijsen (Real Madrid) and Zabarnyi (PSG) were widely reported by Sky Sports and ESPN.</dd></div></div>
+  </dl>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fb">Ask Christiansen</div>
+    <div class="fs">Football analysis · Wyscout data + tactical reading</div>
+    <div class="fd">Data: Wyscout team data, match level. Premier League used for every head-to-head figure; Eredivisie and La Liga as style context only. Tactical pitch shapes come from formation data; pressing runs and role notes are standard tactical reading laid over the metrics. Independent analysis, not affiliated with any club.</div>
+  </div>
+</footer>
+
+<script>
+const DATA = {"perSeason": {"klopp": [{"s": "20/21", "poss": 60.9, "ppda": 9.42, "xg": 1.87, "xga": 1.19, "kontr": 1.68, "smart": 6.16}, {"s": "21/22", "poss": 61.3, "ppda": 8.62, "xg": 2.51, "xga": 0.87, "kontr": 2.63, "smart": 8.5}, {"s": "22/23", "poss": 59.5, "ppda": 8.89, "xg": 2.0, "xga": 1.27, "kontr": 2.74, "smart": 6.37}, {"s": "23/24", "poss": 60.9, "ppda": 8.02, "xg": 2.49, "xga": 1.26, "kontr": 3.26, "smart": 5.21}], "slot": [{"s": "24/25", "poss": 57.2, "ppda": 9.89, "xg": 2.26, "xga": 1.09, "kontr": 1.47, "smart": 2.45}, {"s": "25/26", "poss": 57.8, "ppda": 10.7, "xg": 1.61, "xga": 1.37, "kontr": 1.34, "smart": 1.58}], "iraolaB": [{"s": "23/24", "poss": 46.3, "ppda": 9.48, "xg": 1.71, "xga": 1.81, "kontr": 2.32, "smart": 2.5}, {"s": "24/25", "poss": 49.1, "ppda": 9.1, "xg": 1.81, "xga": 1.39, "kontr": 1.13, "smart": 1.55}, {"s": "25/26", "poss": 49.7, "ppda": 10.38, "xg": 1.72, "xga": 1.67, "kontr": 1.13, "smart": 1.45}]},
+"avg": {"klopp": {"smart": 6.56, "long": 9.1, "fwd": 36.7, "ppos": 5.65, "losslow": 13.4}, "slot": {"smart": 2.01, "long": 8.0, "fwd": 39.1, "ppos": 5.3, "losslow": 18.4}, "iraolaB": {"smart": 1.83, "long": 12.8, "fwd": 41.5, "ppos": 3.72, "losslow": 18.9}, "iraolaRayo": {"smart": 4.37}}};
+
+const C = {klopp:'#f0323a', slot:'#5aa6e6', iraola:'#f5a623'};
+const $ = id => document.getElementById(id);
+
+/* tabs (accessible) */
+const tabs=[...document.querySelectorAll('.tab')], panels=[...document.querySelectorAll('.panel')];
+let chartsBuilt=false, pitchesBuilt=false;
+function activate(name){
+  tabs.forEach(x=>x.setAttribute('aria-selected', x.dataset.tab===name?'true':'false'));
+  panels.forEach(x=>x.classList.toggle('active', x.id===name));
+  window.scrollTo({top:0,behavior:'auto'});
+  if(name==='data'&&!chartsBuilt){buildCharts();chartsBuilt=true;}
+  if(name==='mechanics'&&!pitchesBuilt){buildPitches();pitchesBuilt=true;}
+}
+tabs.forEach((t,i)=>{
+  t.addEventListener('click',()=>activate(t.dataset.tab));
+  t.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+      e.preventDefault();const d=e.key==='ArrowRight'?1:-1;const n=tabs[(i+d+tabs.length)%tabs.length];
+      n.focus();activate(n.dataset.tab);
+    }
+  });
+});
+
+/* triangle (mouse + keyboard) */
+const triTxt={
+ klopp:['Klopp · Intensity control','var(--klopp)','Keeps the game high and uncomfortable. Opponents rarely get a clean first pass, and when they lose it, Liverpool are already running the other way.'],
+ slot:['Slot · Structure control','var(--slot)','Wins by taking the risk out of the game. Double pivot, patient circulation, few transitions. Calm — until the chances dry up.'],
+ iraola:['Iraola · Event control','var(--iraola)','Wins by piling up moments: the next duel, the next loose ball, the next rushed clearance — and making sure his team gets there first.']
+};
+function showTri(who){const d=triTxt[who];$('triDetail').innerHTML=
+  `<div class="h" style="color:${d[1]}">${d[0]}</div><div class="t">Control model</div><p>${d[2]}</p>`;}
+document.querySelectorAll('.tri .node').forEach(n=>{
+  n.addEventListener('click',()=>showTri(n.dataset.who));
+  n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showTri(n.dataset.who);}});
+});
+
+/* charts */
+Chart.defaults.color='#8c929c';Chart.defaults.font.family="'Barlow',sans-serif";Chart.defaults.font.size=12;
+const grid={color:'rgba(255,255,255,.06)'},gridX={color:'rgba(255,255,255,.06)'};
+
+const quadrant={id:'quadrant',afterDatasetsDraw(ch){const o=ch.options.quad;if(!o)return;
+  const a=ch.chartArea,x=ch.scales.x,y=ch.scales.y,c=ch.ctx;c.save();
+  c.strokeStyle='rgba(255,255,255,.16)';c.lineWidth=1;c.setLineDash([4,4]);
+  if(o.x!=null){const p=x.getPixelForValue(o.x);c.beginPath();c.moveTo(p,a.top);c.lineTo(p,a.bottom);c.stroke();}
+  if(o.y!=null){const p=y.getPixelForValue(o.y);c.beginPath();c.moveTo(a.left,p);c.lineTo(a.right,p);c.stroke();}
+  c.setLineDash([]);c.font="600 11px Barlow";c.fillStyle='rgba(255,255,255,.34)';
+  (o.labels||[]).forEach(l=>{c.textAlign=l.a;c.fillText(l.t,l.a==='left'?a.left+8:a.right-8,l.top?a.top+16:a.bottom-8);});
+  c.restore();}};
+Chart.register(quadrant);
+
+function buildCharts(){
+  new Chart($('c1'),{type:'scatter',data:{datasets:[
+    mk('Klopp',DATA.perSeason.klopp.map(d=>({x:d.poss,y:d.ppda,l:d.s})),C.klopp),
+    mk('Slot',DATA.perSeason.slot.map(d=>({x:d.poss,y:d.ppda,l:d.s})),C.slot),
+    mk('Iraola · Bournemouth',DATA.perSeason.iraolaB.map(d=>({x:d.poss,y:d.ppda,l:d.s})),C.iraola)]},
+    options:scatterOpts('Possession %','PPDA (press)',{reverseY:true})});
+
+  const seas=['20/21','21/22','22/23','23/24','24/25','25/26'];
+  const ks=Object.fromEntries(DATA.perSeason.klopp.map(d=>[d.s,d.kontr]));
+  const ss=Object.fromEntries(DATA.perSeason.slot.map(d=>[d.s,d.kontr]));
+  const is=Object.fromEntries(DATA.perSeason.iraolaB.map(d=>[d.s,d.kontr]));
+  new Chart($('c2'),{type:'line',data:{labels:seas,datasets:[
+    line('Klopp',seas.map(s=>ks[s]??null),C.klopp),
+    line('Slot',seas.map(s=>ss[s]??null),C.slot),
+    line('Iraola · Bournemouth',seas.map(s=>is[s]??null),C.iraola)]},
+    options:baseOpts({y:'Counterattacks / match'})});
+
+  new Chart($('c3'),{type:'bar',data:{labels:['Klopp · LFC','Slot · LFC','Iraola · B.mouth','Iraola · Rayo'],
+    datasets:[{data:[DATA.avg.klopp.smart,DATA.avg.slot.smart,DATA.avg.iraolaB.smart,DATA.avg.iraolaRayo.smart],
+    backgroundColor:[C.klopp,C.slot,C.iraola,'rgba(245,166,35,.45)'],borderRadius:5,barThickness:46}]},
+    options:baseOpts({y:'Smart passes / match',noLegend:true})});
+
+  const A=DATA.avg;
+  miniBar('c4a',[A.klopp.long,A.slot.long,A.iraolaB.long]);
+  miniBar('c4b',[A.klopp.fwd,A.slot.fwd,A.iraolaB.fwd]);
+  miniBar('c4c',[A.klopp.ppos,A.slot.ppos,A.iraolaB.ppos]);
+  miniBar('c4d',[A.klopp.losslow,A.slot.losslow,A.iraolaB.losslow]);
+
+  new Chart($('c5'),{type:'scatter',data:{datasets:[
+    mk('Klopp',DATA.perSeason.klopp.map(d=>({x:d.xg,y:d.xga,l:d.s})),C.klopp),
+    mk('Slot',DATA.perSeason.slot.map(d=>({x:d.xg,y:d.xga,l:d.s})),C.slot),
+    mk('Iraola · Bournemouth',DATA.perSeason.iraolaB.map(d=>({x:d.xg,y:d.xga,l:d.s})),C.iraola)]},
+    options:scatterOpts('xG / match','xGA / match (lower = up)',{reverseY:true,
+      quad:{x:1.9,y:1.3,labels:[{t:'DOMINATION',a:'right',top:true},{t:'STERILE CONTROL',a:'left',top:true},{t:'DANGER',a:'left'},{t:'CHAOS',a:'right'}]}})});
+}
+function miniBar(id,vals){new Chart($(id),{type:'bar',data:{labels:['Klopp','Slot','Iraola'],
+  datasets:[{data:vals,backgroundColor:[C.klopp,C.slot,C.iraola],borderRadius:4,barThickness:40}]},
+  options:{responsive:true,maintainAspectRatio:false,
+   plugins:{legend:{display:false},tooltip:{enabled:true}},
+   scales:{x:{grid:{display:false},ticks:{font:{family:"'JetBrains Mono'",size:10}}},
+     y:{grid:grid,beginAtZero:true,ticks:{font:{family:"'JetBrains Mono'",size:10}}}}}});}
+function mk(label,data,color){return{label,data,backgroundColor:color,borderColor:color,pointRadius:7,pointHoverRadius:9};}
+function line(label,data,color){return{label,data,borderColor:color,backgroundColor:color,tension:.25,spanGaps:false,pointRadius:5,pointHoverRadius:7,borderWidth:2.5};}
+function baseOpts(o){return{responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:!o.noLegend,labels:{usePointStyle:true,pointStyle:'rectRounded',padding:16,font:{family:"'JetBrains Mono'",size:11}}}},
+  scales:{x:{grid:gridX,ticks:{font:{family:"'JetBrains Mono'"}}},
+    y:{grid:grid,title:{display:!!o.y,text:o.y,color:'#8c929c'},ticks:{font:{family:"'JetBrains Mono'"}}}}};}
+function scatterOpts(xt,yt,o){o=o||{};return{responsive:true,maintainAspectRatio:false,quad:o.quad,
+  plugins:{legend:{labels:{usePointStyle:true,pointStyle:'circle',padding:16,font:{family:"'JetBrains Mono'",size:11}}},
+   tooltip:{callbacks:{label:c=>`${c.dataset.label} ${c.raw.l}: ${xt.split(' ')[0]} ${c.raw.x}, ${yt.split(' ')[0]} ${c.raw.y}`}}},
+  scales:{x:{grid:gridX,title:{display:true,text:xt,color:'#8c929c'},ticks:{font:{family:"'JetBrains Mono'"}}},
+    y:{reverse:!!o.reverseY,grid:grid,title:{display:true,text:yt,color:'#8c929c'},ticks:{font:{family:"'JetBrains Mono'"}}}}};}
+
+/* pitch diagrams */
+function pitch(el,color,rows){
+  const W=200,H=300;let s=`<svg viewBox="0 0 ${W} ${H}" style="--c:${color}" role="img" aria-label="Formation shape">`;
+  s+=`<rect x="1" y="1" width="${W-2}" height="${H-2}" rx="8" fill="rgba(255,255,255,.02)" stroke="rgba(255,255,255,.10)"/>`;
+  s+=`<line x1="1" y1="${H/2}" x2="${W-1}" y2="${H/2}" stroke="rgba(255,255,255,.07)"/>`;
+  s+=`<circle cx="${W/2}" cy="${H/2}" r="26" fill="none" stroke="rgba(255,255,255,.07)"/>`;
+  s+=`<rect x="${W/2-32}" y="1" width="64" height="34" fill="none" stroke="rgba(255,255,255,.07)"/>`;
+  s+=`<rect x="${W/2-32}" y="${H-35}" width="64" height="34" fill="none" stroke="rgba(255,255,255,.07)"/>`;
+  rows.forEach(r=>{const y=r.y,n=r.p.length;r.p.forEach((p,i)=>{const x=(W/(n+1))*(i+1);
+    s+=`<circle class="dot" cx="${x}" cy="${y}" r="11"/><text class="pl" x="${x}" y="${y+3}">${p}</text>`;});});
+  s+=`</svg>`;el.innerHTML=s;
+}
+function buildPitches(){
+  pitch($('pitchK'),C.klopp,[{y:46,p:['LW','CF','RW']},{y:120,p:['8','8']},{y:170,p:['6']},{y:250,p:['LB','CB','CB','RB']}]);
+  pitch($('pitchS'),C.slot,[{y:46,p:['CF']},{y:104,p:['LW','10','RW']},{y:168,p:['6','6']},{y:250,p:['LB','CB','CB','RB']}]);
+  pitch($('pitchI'),C.iraola,[{y:50,p:['CF','10']},{y:118,p:['LW','RW']},{y:168,p:['6','6']},{y:250,p:['LB','CB','CB','RB']}]);
+}
+</script>
+</body>
+</html>
